@@ -35,3 +35,7 @@ and exit classes, and searches a deterministic 100,000-line fixture.
 ## License
 
 Licensed under either the MIT License or Apache License 2.0, at your option.
+
+## Security
+
+Report suspected vulnerabilities through the private process in [SECURITY.md](SECURITY.md), not a public issue.

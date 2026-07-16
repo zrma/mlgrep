@@ -29,7 +29,13 @@ jobs:
 
       - name: Install Mallang v1.0.0
         run: |
-          curl -fsSLO https://github.com/zrma/mallang/releases/download/v1.0.0/install.sh
+          curl --fail --location --silent --show-error \
+            --proto '=https' --proto-redir '=https' --tlsv1.2 --retry 3 \
+            https://github.com/zrma/mallang/releases/download/v1.0.0/install.sh \
+            --output install.sh
+          printf '%s  %s\n' \
+            e223f952286ea1d0905eb53500410138aa00b56c14b25563f1eafecb4e138150 \
+            install.sh | shasum -a 256 --check -
           sh install.sh --version 1.0.0
           "$HOME/.local/bin/mlg" --version
 

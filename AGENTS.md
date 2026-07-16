@@ -22,7 +22,7 @@ Baseline ID: `openai-gpt-5.6-2026-07-11`.
 - Persistence: continue until the requested outcome is complete; do not stop after only analysis, a partial patch, or an intermediate tool success. Stop and escalate only at a real permission, product-decision, or external-state boundary.
 - Verification: treat tool and patch success as provisional. Re-read the diff and verify the user-visible or runtime outcome with the narrowest meaningful checks, then broaden only when risk warrants it.
 - Publication boundary: before a public push, tag/release, visibility change, or published-history rewrite, run the repository boundary check and any authorized local private-inventory check. Keep private inventory outside published repositories and CI configuration; retain only non-identifying responsibility boundaries and operational contracts.
-- Tracked-artifact privacy: treat tool output, memory-derived environment context, local absolute paths, machine/host/cluster identifiers, internal endpoints or addresses, and full diagnostic logs as local-only by default. Do not paste raw stdout or stderr into tracked files; retain repository-owned decisions and redacted verification outcomes with placeholders such as `<repo-root>`, `<home>`, `<private-host>`, `<internal-ip>`, and `<cluster-context>`.
+- Tracked-artifact privacy: treat tool output, memory-derived environment context, local absolute paths, machine/host/cluster identifiers, internal endpoints or addresses, and full diagnostic logs as local-only by default. Do not paste raw stdout or stderr into tracked files; retain repository-owned decisions and redacted verification outcomes with placeholders such as `<repo-root>`, `<private-host>`, `<internal-ip>`, and `<cluster-context>`.
 - Output: lead with the conclusion. Include required evidence, material caveats, and the next action; trim introductions, repetition, generic reassurance, and optional background before trimming required content.
 - Structure: use a lightweight task-specific plan or output shape. Do not impose a global template or long process narration when the repository already supplies the necessary workflow.
 - Modes and orchestration: configure Pro mode in the API or runtime rather than asking the model to “think harder.” Use Programmatic Tool Calling only for bounded reduction stages with explicit schemas, limits, and no approval-sensitive side effects; keep semantic decisions and final validation direct.
@@ -35,4 +35,5 @@ Baseline ID: `openai-gpt-5.6-2026-07-11`.
 - 검색 의미와 exit status는 `src/search/search.mlg`, `src/main.mlg`와 테스트를 source of truth로 사용한다.
 - Mallang stable compiler `mlg 1.0.0`만 지원 기준으로 사용하고 compiler checkout에 의존하지 않는다.
 - 기본 전체 검증은 `scripts/check.sh`; 공개 경계는 `scripts/check-publication-boundary.py`로 확인한다.
+- 공개 취약점 제보와 지원 범위는 `SECURITY.md`를 따른다.
 - 로컬 VCS는 `jj`를 사용하고 push는 명시적 권한이 있을 때만 수행한다.

@@ -6,4 +6,4 @@
 - CLI fixtures cover literal/Unicode output, count mode and exit classes `0/1/2`.
 - The deterministic 100,000-line smoke and public repository boundary gate pass.
 - External-consumer findings are recorded in `docs/mallang-v1-findings.md`.
-- No remote repository has been created or pushed.
+- Publication target is a public GitHub repository; remote state and CI are verified after each push.

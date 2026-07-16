@@ -4,6 +4,7 @@ agent_harness: docs/agent-harness.md
 status: docs/status.md
 roadmap: docs/roadmap.md
 consumer_findings: docs/mallang-v1-findings.md
+security: SECURITY.md
 active_work_glob: docs/todo-*.md
 
 public_dependencies:
