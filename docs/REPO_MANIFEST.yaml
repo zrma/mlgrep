@@ -1,0 +1,25 @@
+schema_version: 1
+entrypoint: docs/HANDOFF.md
+agent_harness: docs/agent-harness.md
+status: docs/status.md
+roadmap: docs/roadmap.md
+consumer_findings: docs/mallang-v1-findings.md
+active_work_glob: docs/todo-*.md
+
+public_dependencies:
+  - zrma/mallang
+
+checks:
+  full: scripts/check.sh
+  harness: scripts/check-agent-harness-interface.sh
+  publication: scripts/check-publication-boundary.py
+  mallang:
+    - mlg fmt --check .
+    - mlg check .
+    - mlg test .
+    - mlg build . -o target/mlgrep
+
+vcs:
+  local: jj
+  change_message: "<type>: <summary>"
+  push_requires_explicit_permission: true

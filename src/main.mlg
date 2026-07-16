@@ -1,0 +1,128 @@
+package main
+
+import "std/errors"
+import "std/fs"
+import "std/io"
+import "std/os"
+import "std/strings"
+import "mlgrep/search"
+
+func ErrorKindName(kind errors.Kind) string {
+    return match kind {
+        case errors.Kind.NotFound {
+            "NotFound"
+        }
+        case errors.Kind.PermissionDenied {
+            "PermissionDenied"
+        }
+        case errors.Kind.AlreadyExists {
+            "AlreadyExists"
+        }
+        case errors.Kind.InvalidInput {
+            "InvalidInput"
+        }
+        case errors.Kind.InvalidData {
+            "InvalidData"
+        }
+        case errors.Kind.Interrupted {
+            "Interrupted"
+        }
+        case errors.Kind.Other {
+            "Other"
+        }
+    }
+}
+
+func ExitWithMessage(message string, code int) {
+    match io.writeStderr(con message) {
+        case Ok(_) {}
+        case Err(_) {}
+    }
+    os.exit(code)
+}
+
+func ExitWithError(operation string, kind errors.Kind) {
+    kind_name := ErrorKindName(kind)
+    parts := []string{"mlgrep: ", operation, " failed: ", kind_name, "\n"}
+    empty := ""
+    message := strings.join(con parts, con empty)
+    ExitWithMessage(message, 2)
+}
+
+func WriteStdout(con text string) {
+    match io.writeStdout(con text) {
+        case Ok(_) {}
+        case Err(error) {
+            ExitWithError("stdout", error.kind)
+        }
+    }
+}
+
+func WriteMatch(line_number int, con line string) {
+    number := strings.fromInt(line_number)
+    WriteStdout(con number)
+    WriteStdout(con ":")
+    WriteStdout(con line)
+    WriteStdout(con "\n")
+}
+
+func WriteCount(count int) {
+    count_text := strings.fromInt(count)
+    WriteStdout(con count_text)
+    WriteStdout(con "\n")
+}
+
+func RunSearch(con pattern string, con path string, count_only bool) {
+    match fs.readText(con path) {
+        case Ok(text) {
+            if count_only {
+                result := search.Summarize(con text, con pattern)
+                match result {
+                    case search.Summary.NoMatches {
+                        WriteCount(0)
+                        os.exit(1)
+                    }
+                    case search.Summary.Matches(count) {
+                        WriteCount(count)
+                    }
+                }
+            } else {
+                newline := "\n"
+                lines := strings.split(con text, con newline)
+                line_count := search.LineCount(con text, con lines)
+                mut match_count := 0
+                for mut index := 0; index < line_count; index = index + 1 {
+                    if search.Matches(con lines[index], con pattern) {
+                        match_count = match_count + 1
+                        WriteMatch(index + 1, con lines[index])
+                    }
+                }
+                if match_count == 0 {
+                    os.exit(1)
+                }
+            }
+        }
+        case Err(error) {
+            ExitWithError("read", error.kind)
+        }
+    }
+}
+
+func main() {
+    match os.args() {
+        case Ok(args) {
+            if len(args) == 2 && args[1]== "--help" {
+                WriteStdout(con "usage: mlgrep [--count] <pattern> <file>\n")
+            } else if len(args) == 3 {
+                RunSearch(con args[1], con args[2], false)
+            } else if len(args) == 4 && args[1]== "--count" {
+                RunSearch(con args[2], con args[3], true)
+            } else {
+                ExitWithMessage("usage: mlgrep [--count] <pattern> <file>\n", 2)
+            }
+        }
+        case Err(error) {
+            ExitWithError("arguments", error.kind)
+        }
+    }
+}

@@ -1,0 +1,4 @@
+2026-07-17 INFO service started
+2026-07-17 ERROR database timeout
+2026-07-17 WARN retry scheduled
+2026-07-17 ERROR retry exhausted

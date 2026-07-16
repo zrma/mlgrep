@@ -1,0 +1,41 @@
+package search
+
+import "std/strings"
+
+pub type Summary enum {
+    NoMatches
+    Matches(int)
+}
+
+pub func Matches(con line string, con needle string) bool {
+    return strings.contains(con line, con needle)
+}
+
+pub func LineCount(con text string, con lines []string) int {
+    if strings.byteLen(con text) == 0 {
+        return 0
+    }
+    count := len(lines)
+    if strings.byteLen(con lines[count - 1]) == 0 {
+        return count - 1
+    }
+    return count
+}
+
+pub func Summarize(con text string, con needle string) Summary {
+    newline := "\n"
+    lines := strings.split(con text, con newline)
+    line_count := LineCount(con text, con lines)
+    mut match_count := 0
+
+    for mut index := 0; index < line_count; index = index + 1 {
+        if Matches(con lines[index], con needle) {
+            match_count = match_count + 1
+        }
+    }
+
+    if match_count == 0 {
+        return Summary.NoMatches
+    }
+    return Summary.Matches(match_count)
+}

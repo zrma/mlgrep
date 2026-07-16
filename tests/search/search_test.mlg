@@ -1,0 +1,87 @@
+package search
+
+test MatchesLiteralSubstring() {
+    line := "ERROR timeout"
+    needle := "ERROR"
+    assert(Matches(con line, con needle))
+}
+
+test SummarizesMatchingLines() {
+    text := "INFO ready\nERROR timeout\nWARN retry\nERROR exhausted"
+    needle := "ERROR"
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {
+            assert(false)
+        }
+        case Summary.Matches(count) {
+            assert(count == 2)
+        }
+    }
+}
+
+test MatchesUnicodeText() {
+    text := "가나다\n오류 가나다\n오류"
+    needle := "오류"
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {
+            assert(false)
+        }
+        case Summary.Matches(count) {
+            assert(count == 2)
+        }
+    }
+}
+
+test ReportsNoMatches() {
+    text := "INFO ready\nWARN retry"
+    needle := "ERROR"
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {}
+        case Summary.Matches(_) {
+            assert(false)
+        }
+    }
+}
+
+test EmptyPatternMatchesEverySplitLine() {
+    text := "first\nsecond"
+    needle := ""
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {
+            assert(false)
+        }
+        case Summary.Matches(count) {
+            assert(count == 2)
+        }
+    }
+}
+
+test TerminalNewlineDoesNotCreateALine() {
+    text := "first\nsecond\n"
+    needle := ""
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {
+            assert(false)
+        }
+        case Summary.Matches(count) {
+            assert(count == 2)
+        }
+    }
+}
+
+test EmptyInputHasNoLines() {
+    text := ""
+    needle := ""
+    result := Summarize(con text, con needle)
+    match result {
+        case Summary.NoMatches {}
+        case Summary.Matches(_) {
+            assert(false)
+        }
+    }
+}
