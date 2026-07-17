@@ -1,25 +1,37 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  check:
-    name: Check (${{ matrix.os }})
+  build:
+    name: Build (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-15]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: macos-15
+            target: aarch64-apple-darwin
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Validate tag version
+        run: |
+          version="$(scripts/read-version.sh)"
+          test "$GITHUB_REF_NAME" = "v$version"
 
       - name: Install Linux native prerequisite
         if: runner.os == 'Linux'
@@ -36,16 +48,18 @@ jobs:
       - name: Upload platform archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-${{ matrix.os }}
-          path: target/release-artifact-smoke/first/mlgrep-v*.tar.gz
+          name: release-${{ matrix.target }}
+          path: target/release-artifact-smoke/first/mlgrep-v*-${{ matrix.target }}.tar.gz
           if-no-files-found: error
           compression-level: 0
           retention-days: 7
 
-  release-bundle:
-    name: Release checksum bundle
-    needs: check
+  publish:
+    name: Publish GitHub Release
+    needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -59,6 +73,8 @@ jobs:
 
       - name: Assemble release bundle
         run: |
+          version="$(scripts/read-version.sh)"
+          test "$GITHUB_REF_NAME" = "v$version"
           mkdir -p target/release-bundle
           cp target/release-input/*.tar.gz target/release-bundle/
           cp install.sh target/release-bundle/
@@ -67,11 +83,15 @@ jobs:
             --output target/release-bundle/SHA256SUMS \
             target/release-bundle/*.tar.gz
 
-      - name: Upload release bundle
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: mlgrep-release
-          path: target/release-bundle/*
-          if-no-files-found: error
-          compression-level: 0
-          retention-days: 14
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(scripts/read-version.sh)"
+          gh release create "$GITHUB_REF_NAME" \
+            target/release-bundle/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --latest \
+            --title "mlgrep $version" \
+            --notes-file "docs/releases/v$version.md"

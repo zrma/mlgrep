@@ -23,6 +23,7 @@ fi
 command -v clang >/dev/null 2>&1 || fail "clang is required"
 
 scripts/check-agent-harness-interface.sh
+scripts/check-version.sh
 "$mlg" fmt --check .
 "$mlg" check .
 "$mlg" test .
@@ -35,8 +36,11 @@ cmp tests/fixtures/sample-error.expected target/sample-error.actual
 
 [ "$(target/mlgrep --count ERROR tests/fixtures/sample.log)" = "2" ] ||
   fail "count output mismatch"
-[ "$(target/mlgrep --help)" = "usage: mlgrep [--count] <pattern> <file>" ] ||
+[ "$(target/mlgrep --help)" = "usage: mlgrep [--count] <pattern> <file>
+       mlgrep --version" ] ||
   fail "help output mismatch"
+[ "$(target/mlgrep --version)" = "mlgrep $(scripts/read-version.sh)" ] ||
+  fail "version output mismatch"
 
 set +e
 target/mlgrep MISSING tests/fixtures/sample.log >target/no-match.stdout 2>target/no-match.stderr
@@ -57,7 +61,8 @@ set -e
 [ ! -s target/no-match-count.stderr ] || fail "count no-match stderr must be empty"
 [ "$usage_status" -eq 2 ] || fail "usage status must be 2"
 [ ! -s target/usage.stdout ] || fail "usage stdout must be empty"
-[ "$(cat target/usage.stderr)" = "usage: mlgrep [--count] <pattern> <file>" ] ||
+[ "$(cat target/usage.stderr)" = "usage: mlgrep [--count] <pattern> <file>
+       mlgrep --version" ] ||
   fail "usage stderr mismatch"
 [ "$io_error_status" -eq 2 ] || fail "I/O error status must be 2"
 [ ! -s target/io-error.stdout ] || fail "I/O error stdout must be empty"

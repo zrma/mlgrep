@@ -8,6 +8,7 @@ inspection tool and an external dogfood project for the Mallang stable toolchain
 ```sh
 mlgrep <pattern> <file>
 mlgrep --count <pattern> <file>
+mlgrep --version
 ```
 
 Default output uses 1-based line numbers:
@@ -31,6 +32,18 @@ scripts/check.sh
 
 The gate uses the installed compiler for format, check, test and native build, verifies CLI output
 and exit classes, and searches a deterministic 100,000-line fixture.
+
+## Install
+
+The supported binary targets are macOS arm64 and Linux x86_64:
+
+```sh
+curl -fsSLO https://github.com/zrma/mlgrep/releases/download/v0.1.0/install.sh
+sh install.sh --version 0.1.0
+```
+
+The installer verifies the matching archive against `SHA256SUMS` before atomically replacing
+`$HOME/.local/bin/mlgrep`. Release maintainers run `scripts/check-release.sh` before publishing.
 
 ## License
 

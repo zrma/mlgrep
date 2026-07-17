@@ -12,6 +12,8 @@ public_dependencies:
 
 checks:
   full: scripts/check.sh
+  release: scripts/check-release.sh
+  published_release: scripts/check-published-release.sh
   harness: scripts/check-agent-harness-interface.sh
   publication: scripts/check-publication-boundary.py
   mallang:
@@ -24,3 +26,10 @@ vcs:
   local: jj
   change_message: "<type>: <summary>"
   push_requires_explicit_permission: true
+
+release:
+  version: VERSION
+  targets:
+    - aarch64-apple-darwin
+    - x86_64-unknown-linux-gnu
+  notes: docs/releases/v0.1.0.md

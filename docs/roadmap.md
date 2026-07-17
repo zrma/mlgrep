@@ -9,9 +9,28 @@
 - [x] deterministic large-input validation
 - [x] AI-first harness, publication and VCS gates
 
-## Evidence-Gated Follow-ups
+## v0.1.0: First Binary Release
 
-- streaming search after a concrete whole-file memory limit is measured
-- multiple files or directory traversal after CLI ergonomics are validated
+- [x] CLI version identity
+- [x] deterministic native archives for macOS arm64 and Linux x86_64
+- [x] checksums and atomic installer contract
+- [ ] signed tag, public assets and published installer smoke
+
+## v0.2.0: Streaming I/O
+
+- [ ] establish 1/10/100 MiB time and peak-memory baselines
+- [ ] add the smallest required streaming API to the published Mallang standard library
+- [ ] search incrementally with bounded memory while preserving v0.1 behavior
+- [ ] release streaming search before adding multiple-file semantics
+
+## v0.3.0: Multiple Files
+
+- [ ] accept multiple explicit file paths
+- [ ] define deterministic filename/line output and count aggregation
+- [ ] preserve streaming bounds independently for each file
+
+## Later Evidence-Gated Follow-ups
+
+- directory traversal after explicit multiple-file CLI ergonomics are validated
 - case-insensitive search after Unicode case-folding semantics are decided
 - regex only after a proven user need and an engine/library decision gate

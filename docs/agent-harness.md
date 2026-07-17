@@ -33,6 +33,7 @@ Mallang v1으로 작성된 작고 예측 가능한 native text search CLI를 제
 - 현재 구현과 리스크: `docs/status.md`; 우선순위: `docs/roadmap.md`.
 - 무컨텍스트 시작점: `docs/HANDOFF.md`; 현재 작업: 활성 `docs/todo-*.md`.
 - 검증 선언: `docs/REPO_MANIFEST.yaml`과 `scripts/check.sh`.
+- release identity와 배포 gate: `VERSION`, `scripts/check-release.sh`.
 
 ## Autonomy And Permissions
 
@@ -55,6 +56,7 @@ Mallang v1으로 작성된 작고 예측 가능한 native text search CLI를 제
 ## Verification And Evidence
 
 - 전체 local gate: `scripts/check.sh`.
+- 전체 release gate: `scripts/check-release.sh`; 공개 후 smoke: `scripts/check-published-release.sh`.
 - Mallang gate: `mlg fmt --check .`, `mlg check .`, `mlg test .`, native build와 CLI smoke.
 - 실제 workload: deterministic large UTF-8 log fixture의 count smoke.
 - harness interface: `scripts/check-agent-harness-interface.sh`.
@@ -98,6 +100,7 @@ compile/run latency와 회귀율을 평가한다. 반복 실패는 Mallang test,
 - exit status는 match 0, no-match 1, usage/I/O 2다.
 - count mode는 per-line output을 만들지 않아야 한다.
 - 공개 Mallang release 설치본만 compiler source of truth로 사용한다.
+- v0.2.0은 streaming I/O를 먼저 닫고 multiple-file search는 v0.3.0으로 순차 진행한다.
 
 ## Related Documents
 
