@@ -1,0 +1,4 @@
+tests/fixtures/sample.log:2:2026-07-17 ERROR database timeout
+tests/fixtures/sample.log:4:2026-07-17 ERROR retry exhausted
+tests/fixtures/secondary.log:1:2026-07-17 ERROR secondary first
+tests/fixtures/secondary.log:3:2026-07-17 ERROR secondary second

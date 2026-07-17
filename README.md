@@ -1,13 +1,24 @@
 # mlgrep
 
-`mlgrep` is a small native streaming literal text-search CLI written in Mallang v1. It is both a
-useful log inspection tool and an external dogfood project for the Mallang stable toolchain.
+`mlgrep` is a small native streaming literal text-search CLI written in Mallang v1. Its primary
+role is to be an external reference implementation for the Mallang stable toolchain.
+
+## Why It Exists
+
+`mlgrep` proves that a separately versioned Mallang application can combine borrowed input,
+mutable streaming state, `Result`-based I/O and native distribution without retaining whole files.
+It is not presented as a faster or more capable replacement for `grep` or `ripgrep`.
+
+Version 0.3 is the planned boundary for the grep-shaped reference workload. Further product work
+requires a separate evidence-backed problem, such as typed structured or multiline log pipelines,
+rather than continuing a feature-for-feature grep clone. See
+[docs/product-positioning.md](docs/product-positioning.md).
 
 ## Usage
 
 ```sh
-mlgrep <pattern> <file>
-mlgrep --count <pattern> <file>
+mlgrep <pattern> <file> [file...]
+mlgrep --count <pattern> <file> [file...]
 mlgrep --version
 ```
 
@@ -18,10 +29,18 @@ Default output uses 1-based line numbers:
 4:2026-07-17 ERROR retry exhausted
 ```
 
+Multiple files are processed in command-line order and include their path:
+
+```text
+api.log:2:2026-07-17 ERROR database timeout
+worker.log:4:2026-07-17 ERROR retry exhausted
+```
+
 Exit status is `0` when at least one line matches, `1` when no line matches and `2` for usage or
-I/O failure. Search is an exact UTF-8 substring match. Files are processed incrementally with
-memory bounded by the longest line instead of total input size. Regex, case folding, binary files,
-directory walking and multiple-file search remain outside v0.2.
+I/O failure. Search is an exact UTF-8 substring match. Files are processed one at a time with
+memory bounded by the longest line instead of total input size. Multiple-file count mode emits one
+`path:count` record per operand. Regex, case folding, binary files, stdin and directory walking are
+outside v0.3.
 
 ## Build And Test
 
@@ -32,8 +51,8 @@ scripts/check.sh
 ```
 
 The gate uses the installed compiler for format, check, test and native build, verifies CLI output
-and exit classes, searches a deterministic 100,000-line fixture, and checks peak RSS on 1, 10 and
-100 MiB deterministic inputs.
+and exit classes, searches a deterministic 100,000-line fixture, and checks peak RSS on 1, 10, 100
+and sequential 200 MiB aggregate deterministic workloads.
 
 ## Install
 

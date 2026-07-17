@@ -80,6 +80,36 @@ def measure(binary: Path, fixture: Path, expected_count: int) -> tuple[float, in
     return elapsed, parse_rss(completed.stderr)
 
 
+def measure_multiple(
+    binary: Path, fixture: Path, expected_count: int
+) -> tuple[float, int]:
+    time_args = ["/usr/bin/time", "-lp"] if sys.platform == "darwin" else ["/usr/bin/time", "-v"]
+    started = time.perf_counter()
+    completed = subprocess.run(
+        [
+            *time_args,
+            str(binary),
+            "--count",
+            "ERROR",
+            str(fixture),
+            str(fixture),
+        ],
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    elapsed = time.perf_counter() - started
+    if completed.returncode != 0:
+        raise RuntimeError(
+            f"multiple-file search failed: exit={completed.returncode}\n{completed.stderr}"
+        )
+    expected_stdout = f"{fixture}:{expected_count}\n{fixture}:{expected_count}\n"
+    if completed.stdout != expected_stdout:
+        raise RuntimeError(f"multiple-file count mismatch: {completed.stdout!r}")
+    return elapsed, parse_rss(completed.stderr)
+
+
 def main() -> int:
     args = parse_args()
     binary = args.binary.resolve()
@@ -105,13 +135,35 @@ def main() -> int:
             }
         )
 
+    largest_fixture = fixture_root / f"{SIZES_MIB[-1]}mib.log"
+    largest_expected_count = SIZES_MIB[-1] * MIB // LINE_BYTES // 1000
+    multiple_samples = [
+        measure_multiple(binary, largest_fixture, largest_expected_count)
+        for _ in range(REPEATS)
+    ]
+    multiple_measurement = {
+        "file_count": 2,
+        "per_file_mib": SIZES_MIB[-1],
+        "total_input_mib": SIZES_MIB[-1] * 2,
+        "repeats": REPEATS,
+        "median_seconds": round(
+            statistics.median(sample[0] for sample in multiple_samples), 6
+        ),
+        "median_peak_rss_bytes": int(
+            statistics.median(sample[1] for sample in multiple_samples)
+        ),
+        "max_peak_rss_bytes": max(sample[1] for sample in multiple_samples),
+    }
+
     peak_values = [int(item["max_peak_rss_bytes"]) for item in measurements]
+    peak_values.append(int(multiple_measurement["max_peak_rss_bytes"]))
     rss_growth = max(peak_values) - min(peak_values)
     result = {
-        "schema": "mlgrep.streaming-memory.v1",
+        "schema": "mlgrep.streaming-memory.v2",
         "platform": platform.system().lower(),
         "architecture": platform.machine(),
         "measurements": measurements,
+        "sequential_multiple_file_measurement": multiple_measurement,
         "bounded_check": {
             "max_peak_rss_bytes": max(peak_values),
             "rss_growth_bytes": rss_growth,
@@ -135,6 +187,13 @@ def main() -> int:
             f"streaming memory: input={item['input_mib']} MiB "
             f"median={item['median_seconds']:.6f}s rss={rss_mib:.2f} MiB"
         )
+    print(
+        "streaming memory: "
+        f"files={multiple_measurement['file_count']} "
+        f"total={multiple_measurement['total_input_mib']} MiB "
+        f"median={multiple_measurement['median_seconds']:.6f}s "
+        f"rss={int(multiple_measurement['median_peak_rss_bytes']) / MIB:.2f} MiB"
+    )
     print(f"streaming bounded-memory check passed: rss_growth={rss_growth / MIB:.2f} MiB")
     return 0
 

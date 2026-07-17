@@ -1,0 +1,4 @@
+tests/fixtures/secondary.log:1:2026-07-17 ERROR secondary first
+tests/fixtures/secondary.log:3:2026-07-17 ERROR secondary second
+tests/fixtures/secondary.log:1:2026-07-17 ERROR secondary first
+tests/fixtures/secondary.log:3:2026-07-17 ERROR secondary second

@@ -9,11 +9,11 @@
 
 ## Product Contract
 
-- Input: one UTF-8 file and one literal UTF-8 pattern, processed incrementally.
-- Default output: matching lines as 1-based `line:content` records.
-- `--count`: match count only, without constructing rendered line output.
-- Exit status: match `0`, no-match `1`, usage or I/O failure `2`.
-- v0.2 exclusions: regex, case folding, binary input, recursive directory search and multiple files.
+- Input: one literal UTF-8 pattern and one or more explicit UTF-8 file paths.
+- Default output: single-file `line:content`; multiple-file `path:line:content`.
+- `--count`: single-file bare count; multiple-file ordered `path:count` records.
+- Exit status: any match `0`, aggregate no-match `1`, usage or first I/O failure `2`.
+- v0.3 exclusions: regex, case folding, binary input, stdin and recursive directory search.
 
 ## Toolchain
 
@@ -28,4 +28,5 @@
 - Keep `fs.forEachLine` as the default runtime path and retain bounded-memory evidence.
 - Record concrete language/tooling friction in status/roadmap before proposing a compiler change.
 - v0.2.0 streaming I/O is released; v0.3.0 owns the next multiple-file semantics.
+- Treat v0.3.0 as the grep-shaped reference boundary defined in `docs/product-positioning.md`.
 - Public push, tag, release or visibility mutation remains an explicit external-write boundary.

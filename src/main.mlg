@@ -50,6 +50,25 @@ func ExitWithError(operation string, kind errors.Kind) {
     ExitWithMessage(message, 2)
 }
 
+func WriteStderrBestEffort(con text string) {
+    match io.writeStderr(con text) {
+        case Ok(_) {}
+        case Err(_) {}
+    }
+}
+
+func ExitWithPathError(con operation string, con path string, kind errors.Kind) {
+    kind_name := ErrorKindName(kind)
+    WriteStderrBestEffort(con "mlgrep: ")
+    WriteStderrBestEffort(con operation)
+    WriteStderrBestEffort(con " ")
+    WriteStderrBestEffort(con path)
+    WriteStderrBestEffort(con " failed: ")
+    WriteStderrBestEffort(con kind_name)
+    WriteStderrBestEffort(con "\n")
+    os.exit(2)
+}
+
 func WriteStdout(con text string) {
     match io.writeStdout(con text) {
         case Ok(_) {}
@@ -59,7 +78,11 @@ func WriteStdout(con text string) {
     }
 }
 
-func WriteMatch(line_number int, con line string) {
+func WriteMatch(con path string, show_path bool, line_number int, con line string) {
+    if show_path {
+        WriteStdout(con path)
+        WriteStdout(con ":")
+    }
     number := strings.fromInt(line_number)
     WriteStdout(con number)
     WriteStdout(con ":")
@@ -67,40 +90,60 @@ func WriteMatch(line_number int, con line string) {
     WriteStdout(con "\n")
 }
 
-func WriteCount(count int) {
+func WriteCount(con path string, show_path bool, count int) {
+    if show_path {
+        WriteStdout(con path)
+        WriteStdout(con ":")
+    }
     count_text := strings.fromInt(count)
     WriteStdout(con count_text)
     WriteStdout(con "\n")
 }
 
 type SearchState struct {
+    pattern_index int
+    path_index int
     match_count int
     count_only bool
+    show_path bool
 }
 
-func VisitLine(con pattern string, mut state SearchState, line_number int, con line string) {
-    if search.Matches(con line, con pattern) {
+func VisitLine(con args []string, mut state SearchState, line_number int, con line string) {
+    if search.Matches(con line, con args[state.pattern_index]) {
         state.match_count = state.match_count + 1
         if !state.count_only {
-            WriteMatch(line_number, con line)
+            WriteMatch(con args[state.path_index], state.show_path, line_number, con line)
         }
     }
 }
 
-func RunSearch(con pattern string, con path string, count_only bool) {
-    mut state := SearchState{match_count: 0, count_only: count_only}
+func RunFile(con args []string, pattern_index int, path_index int, count_only bool, show_path bool) int {
+    mut state := SearchState{pattern_index: pattern_index, path_index: path_index, match_count: 0, count_only: count_only, show_path: show_path,}
     visit := VisitLine
-    match fs.forEachLine[string, SearchState](con path, con pattern, mut state, con visit) {
+    match fs.forEachLine[[]string, SearchState](con args[path_index], con args, mut state, con visit) {
         case Ok(_) {}
         case Err(error) {
-            ExitWithError("read", error.kind)
+            if show_path {
+                ExitWithPathError(con "read", con args[path_index], error.kind)
+            } else {
+                ExitWithError("read", error.kind)
+            }
         }
     }
 
     if count_only {
-        WriteCount(state.match_count)
+        WriteCount(con args[path_index], show_path, state.match_count)
     }
-    if state.match_count == 0 {
+    return state.match_count
+}
+
+func RunSearch(con args []string, pattern_index int, first_path_index int, count_only bool) {
+    show_path := len(args) - first_path_index > 1
+    mut total_matches := 0
+    for mut path_index := first_path_index; path_index < len(args); path_index = path_index + 1 {
+        total_matches = total_matches + RunFile(con args, pattern_index, path_index, count_only, show_path)
+    }
+    if total_matches == 0 {
         os.exit(1)
     }
 }
@@ -109,18 +152,22 @@ func main() {
     match os.args() {
         case Ok(args) {
             if len(args) == 2 && args[1]== "--help" {
-                WriteStdout(con "usage: mlgrep [--count] <pattern> <file>\n       mlgrep --version\n")
+                WriteStdout(con "usage: mlgrep [--count] <pattern> <file> [file...]\n       mlgrep --version\n")
             } else if len(args) == 2 && args[1]== "--version" {
                 version_text := version.String()
                 WriteStdout(con "mlgrep ")
                 WriteStdout(con version_text)
                 WriteStdout(con "\n")
-            } else if len(args) == 3 {
-                RunSearch(con args[1], con args[2], false)
-            } else if len(args) == 4 && args[1]== "--count" {
-                RunSearch(con args[2], con args[3], true)
+            } else if len(args) >= 4 && args[1]== "--count" {
+                RunSearch(con args, 2, 3, true)
+            } else if len(args) >= 3 {
+                if args[1]== "--count" {
+                    ExitWithMessage("usage: mlgrep [--count] <pattern> <file> [file...]\n       mlgrep --version\n", 2)
+                } else {
+                    RunSearch(con args, 1, 2, false)
+                }
             } else {
-                ExitWithMessage("usage: mlgrep [--count] <pattern> <file>\n       mlgrep --version\n", 2)
+                ExitWithMessage("usage: mlgrep [--count] <pattern> <file> [file...]\n       mlgrep --version\n", 2)
             }
         }
         case Err(error) {

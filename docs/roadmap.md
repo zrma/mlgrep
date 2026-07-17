@@ -25,12 +25,13 @@
 
 ## v0.3.0: Multiple Files
 
-- [ ] accept multiple explicit file paths
-- [ ] define deterministic filename/line output and count aggregation
-- [ ] preserve streaming bounds independently for each file
+- [x] accept multiple explicit file paths
+- [x] define deterministic filename/line output and count aggregation
+- [x] preserve streaming bounds independently for each file
 
 ## Later Evidence-Gated Follow-ups
 
+- structured or multiline log processing only after a separate product hypothesis is validated
 - directory traversal after explicit multiple-file CLI ergonomics are validated
 - case-insensitive search after Unicode case-folding semantics are decided
 - regex only after a proven user need and an engine/library decision gate
