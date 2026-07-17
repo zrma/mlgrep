@@ -40,8 +40,8 @@ and exit classes, searches a deterministic 100,000-line fixture, and checks peak
 The supported binary targets are macOS arm64 and Linux x86_64:
 
 ```sh
-curl -fsSLO https://github.com/zrma/mlgrep/releases/download/v0.1.0/install.sh
-sh install.sh --version 0.1.0
+curl -fsSLO https://github.com/zrma/mlgrep/releases/download/v0.2.0/install.sh
+sh install.sh --version 0.2.0
 ```
 
 The installer verifies the matching archive against `SHA256SUMS` before atomically replacing

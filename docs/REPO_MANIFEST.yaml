@@ -33,4 +33,4 @@ release:
   targets:
     - aarch64-apple-darwin
     - x86_64-unknown-linux-gnu
-  notes: docs/releases/v0.1.0.md
+  notes: docs/releases/v0.2.0.md

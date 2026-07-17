@@ -1,6 +1,6 @@
 # v0.2.0 Streaming I/O
 
-상태: implementation complete; release pending
+상태: release-ready; signed publication pending
 
 ## Goal
 

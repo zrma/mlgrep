@@ -2,7 +2,8 @@
 
 ## Supported Versions
 
-Until the first tagged release, the latest `main` revision is the only supported version.
+The latest stable v0.x release is supported. Older v0.x releases are retained for provenance but
+do not receive routine fixes.
 
 ## Reporting A Vulnerability
 
