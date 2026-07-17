@@ -28,5 +28,13 @@ sh "$work/install.sh" --version "$version" --bin-dir "$work/bin"
 [[ "$("$work/bin/mlgrep" --version)" == "mlgrep $version" ]]
 "$work/bin/mlgrep" ERROR tests/fixtures/sample.log >"$work/search.actual"
 cmp tests/fixtures/sample-error.expected "$work/search.actual"
+case "$version" in
+  0.1.0|0.2.0) ;;
+  *)
+    "$work/bin/mlgrep" ERROR tests/fixtures/sample.log tests/fixtures/secondary.log \
+      >"$work/multiple.actual"
+    cmp tests/fixtures/multiple.expected "$work/multiple.actual"
+    ;;
+esac
 
 printf 'published release smoke passed: mlgrep %s\n' "$version"

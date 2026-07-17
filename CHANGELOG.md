@@ -2,7 +2,7 @@
 
 All notable changes to mlgrep are documented in this file.
 
-## [Unreleased]
+## [0.3.0] - 2026-07-17
 
 - Accept multiple explicit file paths and process them sequentially in CLI order.
 - Add deterministic path-prefixed matches, per-file counts and aggregate exit semantics.

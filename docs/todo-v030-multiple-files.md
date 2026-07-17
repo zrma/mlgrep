@@ -1,6 +1,6 @@
 # v0.3.0 Multiple Files
 
-상태: implementation in progress
+상태: release-ready; signed publication pending
 
 ## Goal
 

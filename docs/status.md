@@ -1,6 +1,6 @@
 # Status
 
-상태: v0.3.0 multiple-file implementation complete; release preparation next
+상태: v0.3.0 release-ready; signed publication pending
 
 - Public `mlg 1.1.0` format, check, 5 focused unit tests and native build are green.
 - CLI fixtures cover literal/Unicode output, count mode and exit classes `0/1/2`.
