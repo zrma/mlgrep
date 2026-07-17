@@ -1,6 +1,6 @@
 # v0.3.0 Multiple Files
 
-상태: release-ready; signed publication pending
+상태: complete; released as v0.3.0 on 2026-07-17
 
 ## Goal
 
@@ -34,7 +34,7 @@ single-file interface and bounded-memory streaming implementation.
 - [x] cover ordered matches, ordered per-file counts and duplicate operands
 - [x] cover aggregate match/no-match status and first-error short-circuiting
 - [x] prove bounded peak memory when large files are processed sequentially
-- [ ] publish signed v0.3.0 archives, checksums and installer
+- [x] publish signed v0.3.0 archives, checksums and installer
 
 ## Deferred
 

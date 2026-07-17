@@ -28,6 +28,7 @@
 - [x] accept multiple explicit file paths
 - [x] define deterministic filename/line output and count aggregation
 - [x] preserve streaming bounds independently for each file
+- [x] publish signed cross-platform v0.3.0 artifacts and verify clean installation
 
 ## Later Evidence-Gated Follow-ups
 

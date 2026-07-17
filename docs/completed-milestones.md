@@ -30,3 +30,17 @@ Evidence: release workflow and `scripts/check-published-release.sh --version 0.1
 
 Evidence: `scripts/check-release.sh` and
 `scripts/check-published-release.sh --version 0.2.0` passed.
+
+## 2026-07-17: v0.3.0 Multiple Files
+
+- Added one-or-more explicit path operands processed sequentially in CLI order.
+- Preserved v0.2.0 single-file output while defining path-prefixed matches,
+  per-file counts, duplicate operands and aggregate exit semantics.
+- Extended native regressions through first-error partial output and a sequential
+  200 MiB bounded-memory workload on macOS arm64 and Linux x86_64.
+- Published signed native archives, combined checksums and the atomic installer.
+- Fixed v0.3.0 as the grep-shaped reference boundary; future product work now
+  requires a validated structured or multiline log-processing hypothesis.
+
+Evidence: cross-platform CI, `scripts/check-release.sh` and
+`scripts/check-published-release.sh --version 0.3.0` passed.
