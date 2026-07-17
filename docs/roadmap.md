@@ -14,7 +14,7 @@
 - [x] CLI version identity
 - [x] deterministic native archives for macOS arm64 and Linux x86_64
 - [x] checksums and atomic installer contract
-- [ ] signed tag, public assets and published installer smoke
+- [x] signed tag, public assets and published installer smoke
 
 ## v0.2.0: Streaming I/O
 
