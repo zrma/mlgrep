@@ -1,6 +1,6 @@
 # v0.2.0 Streaming I/O
 
-상태: release-ready; signed publication pending
+상태: complete; released as v0.2.0 on 2026-07-17
 
 ## Goal
 
@@ -15,7 +15,7 @@ multiple files.
 - [x] preserve literal matching, line numbering, Unicode behavior and exit classes
 - [x] prove bounded peak memory as input size grows
 - [x] keep the whole-file implementation out of the default runtime path
-- [ ] publish signed v0.2.0 archives, checksums and installer
+- [x] publish signed v0.2.0 archives, checksums and installer
 
 ## Sequence Boundary
 

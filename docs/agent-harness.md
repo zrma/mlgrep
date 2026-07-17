@@ -100,7 +100,7 @@ compile/run latency와 회귀율을 평가한다. 반복 실패는 Mallang test,
 - exit status는 match 0, no-match 1, usage/I/O 2다.
 - count mode는 per-line output을 만들지 않아야 한다.
 - 공개 Mallang release 설치본만 compiler source of truth로 사용한다.
-- v0.2.0 streaming I/O release를 닫고 multiple-file search는 v0.3.0으로 순차 진행한다.
+- v0.2.0 streaming I/O는 released이며 multiple-file search는 v0.3.0으로 순차 진행한다.
 
 ## Related Documents
 

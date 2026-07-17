@@ -21,7 +21,7 @@
 - [x] establish 1/10/100 MiB time and peak-memory baselines
 - [x] add the smallest required streaming API to the published Mallang standard library
 - [x] search incrementally with bounded memory while preserving v0.1 behavior
-- [ ] release streaming search before adding multiple-file semantics
+- [x] release streaming search before adding multiple-file semantics
 
 ## v0.3.0: Multiple Files
 

@@ -27,5 +27,5 @@
 - Do not depend on a Mallang compiler checkout or unpublished language behavior.
 - Keep `fs.forEachLine` as the default runtime path and retain bounded-memory evidence.
 - Record concrete language/tooling friction in status/roadmap before proposing a compiler change.
-- Close v0.2.0 streaming I/O before starting v0.3.0 multiple-file semantics.
+- v0.2.0 streaming I/O is released; v0.3.0 owns the next multiple-file semantics.
 - Public push, tag, release or visibility mutation remains an explicit external-write boundary.
