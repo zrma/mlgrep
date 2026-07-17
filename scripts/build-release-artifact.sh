@@ -61,11 +61,11 @@ elif command -v mlg >/dev/null 2>&1; then
 elif [[ -x "$HOME/.local/bin/mlg" ]]; then
   mlg="$HOME/.local/bin/mlg"
 else
-  echo "mlg 1.0.0 is not installed" >&2
+  echo "mlg 1.1.0 is not installed" >&2
   exit 1
 fi
-[[ "$($mlg --version)" == "mlg 1.0.0" ]] || {
-  echo "mlg 1.0.0 is required" >&2
+[[ "$($mlg --version)" == "mlg 1.1.0" ]] || {
+  echo "mlg 1.1.0 is required" >&2
   exit 1
 }
 

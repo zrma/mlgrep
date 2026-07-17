@@ -4,7 +4,7 @@ set -eu
 repo_root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$repo_root"
 
-version=1.0.0
+version=1.1.0
 expected=e223f952286ea1d0905eb53500410138aa00b56c14b25563f1eafecb4e138150
 work=target/bootstrap
 installer=$work/mallang-install.sh

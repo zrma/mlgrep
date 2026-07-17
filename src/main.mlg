@@ -73,39 +73,35 @@ func WriteCount(count int) {
     WriteStdout(con "\n")
 }
 
-func RunSearch(con pattern string, con path string, count_only bool) {
-    match fs.readText(con path) {
-        case Ok(text) {
-            if count_only {
-                result := search.Summarize(con text, con pattern)
-                match result {
-                    case search.Summary.NoMatches {
-                        WriteCount(0)
-                        os.exit(1)
-                    }
-                    case search.Summary.Matches(count) {
-                        WriteCount(count)
-                    }
-                }
-            } else {
-                newline := "\n"
-                lines := strings.split(con text, con newline)
-                line_count := search.LineCount(con text, con lines)
-                mut match_count := 0
-                for mut index := 0; index < line_count; index = index + 1 {
-                    if search.Matches(con lines[index], con pattern) {
-                        match_count = match_count + 1
-                        WriteMatch(index + 1, con lines[index])
-                    }
-                }
-                if match_count == 0 {
-                    os.exit(1)
-                }
-            }
+type SearchState struct {
+    match_count int
+    count_only bool
+}
+
+func VisitLine(con pattern string, mut state SearchState, line_number int, con line string) {
+    if search.Matches(con line, con pattern) {
+        state.match_count = state.match_count + 1
+        if !state.count_only {
+            WriteMatch(line_number, con line)
         }
+    }
+}
+
+func RunSearch(con pattern string, con path string, count_only bool) {
+    mut state := SearchState{match_count: 0, count_only: count_only}
+    visit := VisitLine
+    match fs.forEachLine[string, SearchState](con path, con pattern, mut state, con visit) {
+        case Ok(_) {}
         case Err(error) {
             ExitWithError("read", error.kind)
         }
+    }
+
+    if count_only {
+        WriteCount(state.match_count)
+    }
+    if state.match_count == 0 {
+        os.exit(1)
     }
 }
 

@@ -16,10 +16,10 @@ elif command -v mlg >/dev/null 2>&1; then
 elif [ -x "$HOME/.local/bin/mlg" ]; then
   mlg=$HOME/.local/bin/mlg
 else
-  fail "mlg 1.0.0 is not installed"
+  fail "mlg 1.1.0 is not installed"
 fi
 
-[ "$($mlg --version)" = "mlg 1.0.0" ] || fail "expected mlg 1.0.0"
+[ "$($mlg --version)" = "mlg 1.1.0" ] || fail "expected mlg 1.1.0"
 command -v clang >/dev/null 2>&1 || fail "clang is required"
 
 scripts/check-agent-harness-interface.sh
@@ -51,6 +51,12 @@ target/mlgrep >target/usage.stdout 2>target/usage.stderr
 usage_status=$?
 target/mlgrep ERROR target/missing.log >target/io-error.stdout 2>target/io-error.stderr
 io_error_status=$?
+printf '\377' >target/invalid-utf8.log
+target/mlgrep ERROR target/invalid-utf8.log >target/invalid-utf8.stdout 2>target/invalid-utf8.stderr
+invalid_utf8_status=$?
+printf '' >target/empty.log
+target/mlgrep '' target/empty.log >target/empty.stdout 2>target/empty.stderr
+empty_status=$?
 set -e
 
 [ "$no_match_status" -eq 1 ] || fail "no-match status must be 1"
@@ -68,6 +74,13 @@ set -e
 [ ! -s target/io-error.stdout ] || fail "I/O error stdout must be empty"
 [ "$(cat target/io-error.stderr)" = "mlgrep: read failed: NotFound" ] ||
   fail "I/O error stderr mismatch"
+[ "$invalid_utf8_status" -eq 2 ] || fail "invalid UTF-8 status must be 2"
+[ ! -s target/invalid-utf8.stdout ] || fail "invalid UTF-8 stdout must be empty"
+[ "$(cat target/invalid-utf8.stderr)" = "mlgrep: read failed: InvalidData" ] ||
+  fail "invalid UTF-8 stderr mismatch"
+[ "$empty_status" -eq 1 ] || fail "empty input with empty pattern must not match"
+[ ! -s target/empty.stdout ] || fail "empty input stdout must be empty"
+[ ! -s target/empty.stderr ] || fail "empty input stderr must be empty"
 
 target/mlgrep '' tests/fixtures/sample.log >target/empty-pattern.actual
 [ "$(wc -l <target/empty-pattern.actual | tr -d ' ')" = "4" ] ||
@@ -76,8 +89,17 @@ target/mlgrep '' tests/fixtures/sample.log >target/empty-pattern.actual
 printf 'ready\n오류\n' >target/unicode.log
 [ "$(target/mlgrep 오류 target/unicode.log)" = "2:오류" ] || fail "Unicode output mismatch"
 
+printf 'first\nERROR final' >target/no-final-newline.log
+[ "$(target/mlgrep ERROR target/no-final-newline.log)" = "2:ERROR final" ] ||
+  fail "final line without LF mismatch"
+
 LC_ALL=C awk 'BEGIN { for (i = 1; i <= 100000; i++) { if (i % 1000 == 0) print i " ERROR request failed"; else print i " INFO request complete" } }' >target/large.log
 [ "$(target/mlgrep --count ERROR target/large.log)" = "100" ] ||
   fail "large-input count mismatch"
 
-printf 'mlgrep checks passed with mlg 1.0.0; unit, CLI, exit-status, and 100000-line smoke are green\n'
+python3 scripts/measure-streaming-memory.py \
+  --binary target/mlgrep \
+  --output target/streaming-memory.json \
+  --enforce-bounded
+
+printf 'mlgrep checks passed with mlg 1.1.0; streaming CLI, exit-status, and bounded-memory smoke are green\n'

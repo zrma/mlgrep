@@ -6,82 +6,20 @@ test MatchesLiteralSubstring() {
     assert(Matches(con line, con needle))
 }
 
-test SummarizesMatchingLines() {
-    text := "INFO ready\nERROR timeout\nWARN retry\nERROR exhausted"
-    needle := "ERROR"
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {
-            assert(false)
-        }
-        case Summary.Matches(count) {
-            assert(count == 2)
-        }
-    }
-}
-
 test MatchesUnicodeText() {
-    text := "가나다\n오류 가나다\n오류"
+    text := "오류 가나다"
     needle := "오류"
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {
-            assert(false)
-        }
-        case Summary.Matches(count) {
-            assert(count == 2)
-        }
-    }
+    assert(Matches(con text, con needle))
 }
 
-test ReportsNoMatches() {
-    text := "INFO ready\nWARN retry"
+test RejectsMissingSubstring() {
+    text := "INFO ready"
     needle := "ERROR"
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {}
-        case Summary.Matches(_) {
-            assert(false)
-        }
-    }
+    assert(!Matches(con text, con needle))
 }
 
-test EmptyPatternMatchesEverySplitLine() {
-    text := "first\nsecond"
+test EmptyPatternMatchesEveryLine() {
+    text := "first"
     needle := ""
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {
-            assert(false)
-        }
-        case Summary.Matches(count) {
-            assert(count == 2)
-        }
-    }
-}
-
-test TerminalNewlineDoesNotCreateALine() {
-    text := "first\nsecond\n"
-    needle := ""
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {
-            assert(false)
-        }
-        case Summary.Matches(count) {
-            assert(count == 2)
-        }
-    }
-}
-
-test EmptyInputHasNoLines() {
-    text := ""
-    needle := ""
-    result := Summarize(con text, con needle)
-    match result {
-        case Summary.NoMatches {}
-        case Summary.Matches(_) {
-            assert(false)
-        }
-    }
+    assert(Matches(con text, con needle))
 }

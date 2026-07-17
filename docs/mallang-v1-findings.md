@@ -1,6 +1,6 @@
 # Mallang v1 External Consumer Findings
 
-검증 기준은 공개 배포된 `mlg 1.0.0`이다. 이 문서는 컴파일러 저장소를 수정하지 않고
+현재 검증 기준은 공개 배포된 `mlg 1.1.0`이다. 이 문서는 컴파일러 저장소를 수정하지 않고
 외부 네이티브 CLI를 구현하면서 확인한 언어 및 표준 라이브러리 경계를 기록한다.
 
 ## Borrowed strings from slices
@@ -22,7 +22,10 @@ borrow-preserving formatting/writev API가 필요한지 판단할 수 있다.
 
 ## Whole-file I/O
 
-현재 공개 파일 API는 `fs.readText` 중심이므로 검색 전에 전체 UTF-8 파일을 메모리에 올린다.
-v0.1의 100,000줄 결정적 smoke에는 충분하지만, 입력 크기가 커질수록 최대 메모리는 파일
-크기와 분할된 문자열 저장 비용에 비례한다. streaming은 추측으로 추가하지 않고 실제 한계가
-측정될 때 Mallang의 reader API와 함께 다음 마일스톤으로 다룬다.
+v0.1은 `fs.readText`와 `strings.split`으로 전체 UTF-8 파일과 분할 문자열을 메모리에
+올렸다. 100 MiB 관찰에서 peak RSS가 약 233.5 MiB까지 증가해 streaming 필요를 확인했다.
+
+Mallang 1.1.0의 `fs.forEachLine[C,S]`는 file handle이나 borrowed return을 노출하지 않고
+pattern context와 mutable search state를 한 synchronous call에 빌려준다. v0.2는 이 API로
+whole-file runtime path를 제거했다. 1/10/100 MiB current 측정의 peak RSS는 약 1.3 MiB로
+유지되며, invalid UTF-8와 open/read failure는 기존 exit class 2로 매핑된다.

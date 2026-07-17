@@ -16,6 +16,7 @@ checks:
   published_release: scripts/check-published-release.sh
   harness: scripts/check-agent-harness-interface.sh
   publication: scripts/check-publication-boundary.py
+  streaming_memory: python3 scripts/measure-streaming-memory.py --binary target/mlgrep --output target/streaming-memory.json --enforce-bounded
   mallang:
     - mlg fmt --check .
     - mlg check .

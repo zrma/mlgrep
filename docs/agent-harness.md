@@ -95,12 +95,12 @@ compile/run latency와 회귀율을 평가한다. 반복 실패는 Mallang test,
 
 ## Project Overlay
 
-- v0.1은 UTF-8 whole-file literal substring 검색만 지원하며 regex, glob, directory walk는 제외한다.
+- v0.2는 UTF-8 streaming literal substring 검색만 지원하며 regex, glob, directory walk는 제외한다.
 - 기본 output은 1-based `line:content`; `--count`는 match 수만 출력한다.
 - exit status는 match 0, no-match 1, usage/I/O 2다.
 - count mode는 per-line output을 만들지 않아야 한다.
 - 공개 Mallang release 설치본만 compiler source of truth로 사용한다.
-- v0.2.0은 streaming I/O를 먼저 닫고 multiple-file search는 v0.3.0으로 순차 진행한다.
+- v0.2.0 streaming I/O release를 닫고 multiple-file search는 v0.3.0으로 순차 진행한다.
 
 ## Related Documents
 
@@ -108,6 +108,6 @@ compile/run latency와 회귀율을 평가한다. 반복 실패는 Mallang test,
 - Current state and direction: `docs/status.md`, `docs/roadmap.md`.
 - Completed work: `docs/completed-milestones.md`.
 - Mallang consumer findings: `docs/mallang-v1-findings.md`.
-- Active work: `docs/todo-v01-foundation.md`.
+- Active work: `docs/todo-v020-streaming-io.md`.
 - Escalation: `docs/ESCALATION_POLICY.md`.
 - Declared checks: `docs/REPO_MANIFEST.yaml`.

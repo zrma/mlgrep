@@ -18,9 +18,9 @@
 
 ## v0.2.0: Streaming I/O
 
-- [ ] establish 1/10/100 MiB time and peak-memory baselines
-- [ ] add the smallest required streaming API to the published Mallang standard library
-- [ ] search incrementally with bounded memory while preserving v0.1 behavior
+- [x] establish 1/10/100 MiB time and peak-memory baselines
+- [x] add the smallest required streaming API to the published Mallang standard library
+- [x] search incrementally with bounded memory while preserving v0.1 behavior
 - [ ] release streaming search before adding multiple-file semantics
 
 ## v0.3.0: Multiple Files

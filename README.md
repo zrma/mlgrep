@@ -1,7 +1,7 @@
 # mlgrep
 
-`mlgrep` is a small native literal text-search CLI written in Mallang v1. It is both a useful log
-inspection tool and an external dogfood project for the Mallang stable toolchain.
+`mlgrep` is a small native streaming literal text-search CLI written in Mallang v1. It is both a
+useful log inspection tool and an external dogfood project for the Mallang stable toolchain.
 
 ## Usage
 
@@ -19,19 +19,21 @@ Default output uses 1-based line numbers:
 ```
 
 Exit status is `0` when at least one line matches, `1` when no line matches and `2` for usage or
-I/O failure. Search is an exact UTF-8 substring match. Regex, case folding, binary files, directory
-walking and streaming I/O are intentionally outside v0.1.
+I/O failure. Search is an exact UTF-8 substring match. Files are processed incrementally with
+memory bounded by the longest line instead of total input size. Regex, case folding, binary files,
+directory walking and multiple-file search remain outside v0.2.
 
 ## Build And Test
 
-Install Mallang v1.0.0 and ensure `clang` is available, then run:
+Install Mallang v1.1.0 and ensure `clang` is available, then run:
 
 ```sh
 scripts/check.sh
 ```
 
 The gate uses the installed compiler for format, check, test and native build, verifies CLI output
-and exit classes, and searches a deterministic 100,000-line fixture.
+and exit classes, searches a deterministic 100,000-line fixture, and checks peak RSS on 1, 10 and
+100 MiB deterministic inputs.
 
 ## Install
 
